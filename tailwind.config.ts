@@ -57,6 +57,35 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Climate dashboard colors
+        nature: {
+          green: "hsl(var(--nature-green))",
+          "green-light": "hsl(var(--nature-green-light))",
+          blue: "hsl(var(--nature-blue))",
+          "blue-light": "hsl(var(--nature-blue-light))",
+        },
+        earth: {
+          brown: "hsl(var(--earth-brown))",
+        },
+        success: {
+          green: "hsl(var(--success-green))",
+        },
+        warning: {
+          orange: "hsl(var(--warning-orange))",
+        },
+      },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-node': 'var(--gradient-node)',
+        'gradient-success': 'var(--gradient-success)',
+      },
+      boxShadow: {
+        'node': 'var(--shadow-node)',
+        'sidebar': 'var(--shadow-sidebar)',
+      },
+      transitionTimingFunction: {
+        'smooth': 'var(--transition-smooth)',
+        'bounce': 'var(--transition-bounce)',
       },
       borderRadius: {
         lg: "var(--radius)",
