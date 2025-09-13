@@ -22,13 +22,13 @@ export interface WorkflowNode {
   };
 }
 
-// Hardcoded dummy workflow data
+// Hardcoded dummy workflow data - centered layout
 const dummyWorkflow: WorkflowNode[] = [
   {
     id: "start",
     label: "Data Collection",
     type: "process",
-    position: { x: 100, y: 100 },
+    position: { x: 50, y: 150 },
     data: {
       original: "Manual data entry from multiple spreadsheets and paper forms. Team members spend 2-3 hours daily collecting information from various sources.",
       steps: ["Step 1: Gather paper forms", "Step 2: Input into spreadsheets", "Step 3: Cross-reference data"],
@@ -51,7 +51,7 @@ const dummyWorkflow: WorkflowNode[] = [
     id: "process",
     label: "Analysis & Review",
     type: "analysis",
-    position: { x: 350, y: 150 },
+    position: { x: 300, y: 150 },
     data: {
       original: "Weekly team meetings to review collected data, create reports manually in Excel, and generate charts for stakeholders.",
       steps: ["Step 1: Schedule team review", "Step 2: Compile data manually", "Step 3: Create presentation"],
@@ -74,7 +74,7 @@ const dummyWorkflow: WorkflowNode[] = [
     id: "approval",
     label: "Approval Process", 
     type: "decision",
-    position: { x: 600, y: 100 },
+    position: { x: 550, y: 150 },
     data: {
       original: "Print documents, physical signatures, scan and email workflow. Multiple rounds of revisions via email attachments.",
       steps: ["Step 1: Print documents", "Step 2: Collect signatures", "Step 3: Scan and distribute"],
@@ -97,7 +97,7 @@ const dummyWorkflow: WorkflowNode[] = [
     id: "distribution",
     label: "Distribution",
     type: "output",
-    position: { x: 350, y: 300 },
+    position: { x: 800, y: 150 },
     data: {
       original: "Email individual PDFs to team members, print copies for filing, manual distribution of physical documents.",
       steps: ["Step 1: Generate PDF reports", "Step 2: Email distribution", "Step 3: Physical filing"],
@@ -136,14 +136,24 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-primary">
-              <Leaf className="w-5 h-5 text-white" />
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo moved to top left */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-primary">
+                <Leaf className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">ClimateFlow</h1>
+                <p className="text-sm text-muted-foreground">Optimize workflows for climate impact</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">ClimateFlow</h1>
-              <p className="text-sm text-muted-foreground">Optimize workflows for climate impact</p>
+            
+            {/* Optional: Add navigation or actions on the right */}
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                Workflow Analytics
+              </div>
             </div>
           </div>
         </div>
@@ -152,17 +162,19 @@ const Index = () => {
       {/* Main Content */}
       <div className="flex">
         <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'mr-96' : ''}`}>
-          <div className="p-6">
-            <div className="mb-6">
+          <div className="p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
+            <div className="mb-6 text-center">
               <h2 className="text-xl font-semibold text-foreground mb-2">Workflow Overview</h2>
               <p className="text-muted-foreground">Click on any node to view optimization details and analytics</p>
             </div>
             
-            <WorkflowGraph 
-              nodes={dummyWorkflow} 
-              onNodeClick={handleNodeClick}
-              selectedNode={selectedNode}
-            />
+            <div className="mx-auto" style={{ width: '1050px' }}>
+              <WorkflowGraph 
+                nodes={dummyWorkflow} 
+                onNodeClick={handleNodeClick}
+                selectedNode={selectedNode}
+              />
+            </div>
           </div>
         </main>
 
