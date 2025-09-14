@@ -1,4 +1,6 @@
-# Welcome to your Lovable project
+# ClimateFlow - Workflow Optimization Platform
+
+A React frontend with Python backend integration for analyzing and optimizing business workflows for climate impact.
 
 ## Project info
 
@@ -54,11 +56,71 @@ npm run dev
 
 This project is built with:
 
+**Frontend:**
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- React Query (TanStack Query)
+
+**Backend:**
+- Python
+- Flask
+- Flask-CORS
+- Pandas & NumPy
+
+## Python Backend Integration
+
+This project includes a Python backend that can interface with your React frontend. Here's how to set it up:
+
+### Quick Start
+
+1. **Start both servers automatically:**
+   ```bash
+   # Windows
+   start-dev.bat
+   
+   # Mac/Linux
+   chmod +x start-dev.sh
+   ./start-dev.sh
+   ```
+
+2. **Or start manually:**
+   ```bash
+   # Terminal 1 - Python Backend
+   cd backend
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   python app.py
+   
+   # Terminal 2 - React Frontend
+   npm run dev
+   ```
+
+### Python Integration Features
+
+- **REST API endpoints** for workflow data
+- **Real-time data processing** from Python scripts
+- **Automatic fallback** to sample data if backend is unavailable
+- **Health monitoring** with connection status indicators
+
+### Example Python Scripts
+
+The `backend/` folder includes example scripts showing how to:
+- Send analysis results to React (`data_processor.py`)
+- Create custom analysis workflows (`example_analysis.py`)
+- Process data and update the frontend in real-time
+
+### API Endpoints
+
+- `GET /api/health` - Backend health check
+- `GET /api/workflow` - Get workflow data
+- `GET /api/analytics/summary` - Get analytics summary
+- `POST /api/process-data` - Send processed data to frontend
+
+See `backend/README.md` for detailed API documentation.
 
 ## How can I deploy this project?
 

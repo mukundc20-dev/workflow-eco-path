@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WorkflowGraph } from "@/components/WorkflowGraph";
 import { NodeSidebar } from "@/components/NodeSidebar";
-import { Leaf } from "lucide-react";
+import { Leaf, AlertCircle, CheckCircle } from "lucide-react";
+import { useWorkflowData, useAnalyticsSummary, checkBackendHealth } from "@/hooks/useWorkflowData";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export interface WorkflowNode {
   id: string;
@@ -121,6 +123,24 @@ const dummyWorkflow: WorkflowNode[] = [
 const Index = () => {
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [backendConnected, setBackendConnected] = useState<boolean | null>(null);
+
+  // Fetch data from Python backend
+  const { data: workflowData, isLoading: workflowLoading, error: workflowError } = useWorkflowData();
+  const { data: analyticsData, isLoading: analyticsLoading } = useAnalyticsSummary();
+
+  // Check backend connection
+  useEffect(() => {
+    const checkConnection = async () => {
+      const isConnected = await checkBackendHealth();
+      setBackendConnected(isConnected);
+    };
+    
+    checkConnection();
+    // Check every 30 seconds
+    const interval = setInterval(checkConnection, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleNodeClick = (node: WorkflowNode) => {
     setSelectedNode(node);
@@ -132,8 +152,34 @@ const Index = () => {
     setSelectedNode(null);
   };
 
+  // Use backend data if available, otherwise fall back to dummy data
+  const displayData = workflowData || dummyWorkflow;
+  const isLoading = workflowLoading;
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Backend Connection Status */}
+      {backendConnected === false && (
+        <Alert className="m-4 border-orange-200 bg-orange-50">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-orange-800">
+            Python backend is not connected. Using sample data. 
+            <a href="http://localhost:5000/api/health" target="_blank" rel="noopener noreferrer" className="underline ml-1">
+              Start the backend server
+            </a>
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {backendConnected === true && (
+        <Alert className="m-4 border-green-200 bg-green-50">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">
+            Connected to Python backend - Live data enabled
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="px-6 py-4">
@@ -149,8 +195,14 @@ const Index = () => {
               </div>
             </div>
             
-            {/* Optional: Add navigation or actions on the right */}
+            {/* Analytics Summary */}
             <div className="flex items-center gap-4">
+              {analyticsData && (
+                <div className="text-sm text-muted-foreground">
+                  <div>Avg Cost Reduction: {analyticsData.averageCostReduction}%</div>
+                  <div>Climate Impact: {analyticsData.averageClimateImpact}%</div>
+                </div>
+              )}
               <div className="text-sm text-muted-foreground">
                 Workflow Analytics
               </div>
@@ -169,11 +221,21 @@ const Index = () => {
             </div>
             
             <div className="mx-auto" style={{ width: '1050px' }}>
-              <WorkflowGraph 
-                nodes={dummyWorkflow} 
-                onNodeClick={handleNodeClick}
-                selectedNode={selectedNode}
-              />
+              {isLoading ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-muted-foreground">Loading workflow data...</div>
+                </div>
+              ) : workflowError ? (
+                <div className="flex items-center justify-center h-64">
+                  <div className="text-red-500">Error loading data: {workflowError.message}</div>
+                </div>
+              ) : (
+                <WorkflowGraph 
+                  nodes={displayData} 
+                  onNodeClick={handleNodeClick}
+                  selectedNode={selectedNode}
+                />
+              )}
             </div>
           </div>
         </main>
