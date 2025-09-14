@@ -1,0 +1,10 @@
+# AI API Keys - Copy this file to .env and add your actual keys
+
+# Novita API Key for Llama models
+novita_api_key=your_novita_api_key_here
+
+# OpenAI API Key for GPT-4
+openai_api_key=your_openai_api_key_here
+
+# Anthropic API Key for Claude (optional)
+claude_api_key=your_claude_api_key_here

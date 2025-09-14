@@ -85,6 +85,73 @@ export const useProcessData = () => {
   });
 };
 
+// Workflow execution functions
+const startWorkflow = async () => {
+  const response = await fetch(`${API_BASE_URL}/workflow/start`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to start workflow');
+  }
+  return response.json();
+};
+
+const executeWorkflowStep = async (stepId: string) => {
+  const response = await fetch(`${API_BASE_URL}/workflow/step/${stepId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to execute step ${stepId}`);
+  }
+  return response.json();
+};
+
+const getWorkflowStatus = async () => {
+  const response = await fetch(`${API_BASE_URL}/workflow/status`);
+  if (!response.ok) {
+    throw new Error('Failed to get workflow status');
+  }
+  return response.json();
+};
+
+// Workflow hooks
+export const useStartWorkflow = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: startWorkflow,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workflow-status'] });
+    },
+  });
+};
+
+export const useExecuteWorkflowStep = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: executeWorkflowStep,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workflow-status'] });
+    },
+  });
+};
+
+export const useWorkflowStatus = () => {
+  return useQuery({
+    queryKey: ['workflow-status'],
+    queryFn: getWorkflowStatus,
+    refetchInterval: 1000, // Poll every second when workflow is running
+    enabled: true,
+  });
+};
+
 // Health check function
 export const checkBackendHealth = async (): Promise<boolean> => {
   try {

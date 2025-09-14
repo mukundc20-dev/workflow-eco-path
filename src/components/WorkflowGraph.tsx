@@ -1,10 +1,12 @@
-import { ArrowRight, Database, BarChart3, CheckCircle, Share2 } from "lucide-react";
+import { ArrowRight, Database, BarChart3, CheckCircle, Share2, Clock } from "lucide-react";
 import { WorkflowNode } from "@/pages/Index";
 
 interface WorkflowGraphProps {
   nodes: WorkflowNode[];
   onNodeClick: (node: WorkflowNode) => void;
   selectedNode: WorkflowNode | null;
+  completedSteps?: string[];
+  currentStep?: string | null;
 }
 
 const getNodeIcon = (type: string) => {
@@ -17,7 +19,14 @@ const getNodeIcon = (type: string) => {
   }
 };
 
-const getNodeColor = (type: string) => {
+const getNodeColor = (type: string, isCompleted: boolean, isCurrent: boolean) => {
+  if (isCompleted) {
+    return 'border-green-500 bg-green-50 shadow-md hover:shadow-lg';
+  }
+  if (isCurrent) {
+    return 'border-blue-500 bg-blue-50 shadow-md hover:shadow-lg';
+  }
+  
   switch (type) {
     case 'process': return 'border-nature-blue bg-white shadow-sm hover:shadow-md';
     case 'analysis': return 'border-nature-green bg-white shadow-sm hover:shadow-md';
@@ -27,11 +36,11 @@ const getNodeColor = (type: string) => {
   }
 };
 
-export const WorkflowGraph = ({ nodes, onNodeClick, selectedNode }: WorkflowGraphProps) => {
+export const WorkflowGraph = ({ nodes, onNodeClick, selectedNode, completedSteps = [], currentStep = null }: WorkflowGraphProps) => {
   const connections = [
-    { from: "start", to: "process" },
-    { from: "process", to: "approval" },
-    { from: "approval", to: "distribution" }
+    { from: "profiles", to: "analysis" },
+    { from: "analysis", to: "optimization" },
+    { from: "optimization", to: "results" }
   ];
 
   const getNodeById = (id: string) => nodes.find(node => node.id === id);
@@ -87,6 +96,8 @@ export const WorkflowGraph = ({ nodes, onNodeClick, selectedNode }: WorkflowGrap
         {nodes.map((node) => {
           const Icon = getNodeIcon(node.type);
           const isSelected = selectedNode?.id === node.id;
+          const isCompleted = completedSteps.includes(node.id);
+          const isCurrent = currentStep === node.id;
           
           return (
             <div
@@ -103,7 +114,7 @@ export const WorkflowGraph = ({ nodes, onNodeClick, selectedNode }: WorkflowGrap
             >
               <div className={`
                 w-48 h-28 rounded-xl border-2 p-4
-                ${getNodeColor(node.type)}
+                ${getNodeColor(node.type, isCompleted, isCurrent)}
                 ${isSelected ? 'ring-2 ring-primary ring-offset-2 shadow-lg' : 'shadow-sm group-hover:shadow-xl group-hover:border-primary/50'}
                 transition-all duration-300 ease-out
                 backdrop-blur-sm group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-gray-50/50
@@ -128,6 +139,14 @@ export const WorkflowGraph = ({ nodes, onNodeClick, selectedNode }: WorkflowGrap
                       {node.type}
                     </span>
                   </div>
+                  
+                  {/* Status indicator */}
+                  {isCompleted && (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  )}
+                  {isCurrent && (
+                    <Clock className="w-4 h-4 text-blue-500 animate-spin" />
+                  )}
                 </div>
                 
                 {/* Node title */}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { WorkflowGraph } from "@/components/WorkflowGraph";
 import { NodeSidebar } from "@/components/NodeSidebar";
+import ClimateAnalytics from "@/components/ClimateAnalytics";
 import { Leaf, AlertCircle, CheckCircle } from "lucide-react";
-import { useWorkflowData, useAnalyticsSummary, checkBackendHealth } from "@/hooks/useWorkflowData";
+import { useWorkflowData, useAnalyticsSummary, useWorkflowStatus, checkBackendHealth } from "@/hooks/useWorkflowData";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export interface WorkflowNode {
@@ -24,22 +25,22 @@ export interface WorkflowNode {
   };
 }
 
-// Hardcoded dummy workflow data - centered layout
+// Professor Profile Analysis Workflow
 const dummyWorkflow: WorkflowNode[] = [
   {
-    id: "start",
-    label: "Data Collection",
+    id: "profiles",
+    label: "Profile Collection",
     type: "process",
     position: { x: 50, y: 150 },
     data: {
-      original: "Manual data entry from multiple spreadsheets and paper forms. Team members spend 2-3 hours daily collecting information from various sources.",
-      steps: ["Step 1: Gather paper forms", "Step 2: Input into spreadsheets", "Step 3: Cross-reference data"],
-      optimized: "Automated data collection using digital forms with real-time validation and cloud synchronization.",
+      original: "Manual collection of professor profiles from various university websites and databases. Time-consuming process requiring manual data entry and verification.",
+      steps: ["Step 1: Gather profile data", "Step 2: Extract key information", "Step 3: Validate and format"],
+      optimized: "Automated profile collection with AI-powered extraction and real-time validation from multiple sources.",
       variations: [
-        "Mobile-first data capture",
-        "AI-powered form recognition", 
-        "Integration with existing systems",
-        "Real-time dashboard updates"
+        "API integration with university systems",
+        "AI-powered profile parsing", 
+        "Real-time data validation",
+        "Automated profile updates"
       ],
       metrics: {
         similarity: 85,
@@ -50,19 +51,19 @@ const dummyWorkflow: WorkflowNode[] = [
     }
   },
   {
-    id: "process",
-    label: "Analysis & Review",
+    id: "analysis",
+    label: "AI Model Analysis",
     type: "analysis",
     position: { x: 300, y: 150 },
     data: {
-      original: "Weekly team meetings to review collected data, create reports manually in Excel, and generate charts for stakeholders.",
-      steps: ["Step 1: Schedule team review", "Step 2: Compile data manually", "Step 3: Create presentation"],
-      optimized: "AI-powered analysis with automated report generation and interactive dashboards for real-time insights.",
+      original: "Manual analysis of professor profiles using basic text processing. Limited insights and time-consuming review process.",
+      steps: ["Step 1: Run initial analysis", "Step 2: Compare model outputs", "Step 3: Identify patterns"],
+      optimized: "Multi-model AI analysis with automated comparison and pattern recognition for deeper insights.",
       variations: [
-        "Predictive analytics integration",
-        "Custom visualization templates",
-        "Automated stakeholder alerts",
-        "Multi-format report export"
+        "Llama 3.3 70B analysis",
+        "Llama 3.1 8B comparison",
+        "GPT-4 evaluation",
+        "Automated pattern detection"
       ],
       metrics: {
         similarity: 78,
@@ -73,19 +74,19 @@ const dummyWorkflow: WorkflowNode[] = [
     }
   },
   {
-    id: "approval",
-    label: "Approval Process", 
+    id: "optimization",
+    label: "Prompt Optimization", 
     type: "decision",
     position: { x: 550, y: 150 },
     data: {
-      original: "Print documents, physical signatures, scan and email workflow. Multiple rounds of revisions via email attachments.",
-      steps: ["Step 1: Print documents", "Step 2: Collect signatures", "Step 3: Scan and distribute"],
-      optimized: "Digital approval workflow with electronic signatures and automated routing based on business rules.",
+      original: "Manual prompt engineering with trial-and-error approach. Inconsistent results and time-consuming iterations.",
+      steps: ["Step 1: Analyze model outputs", "Step 2: Identify improvements", "Step 3: Generate optimized prompt"],
+      optimized: "AI-powered prompt optimization with automated analysis and iterative improvement suggestions.",
       variations: [
-        "Mobile approval capabilities",
-        "Conditional approval logic",
-        "Audit trail automation",
-        "Integration with DocuSign"
+        "Automated prompt generation",
+        "Performance-based optimization",
+        "A/B testing integration",
+        "Real-time prompt refinement"
       ],
       metrics: {
         similarity: 90,
@@ -96,19 +97,19 @@ const dummyWorkflow: WorkflowNode[] = [
     }
   },
   {
-    id: "distribution",
-    label: "Distribution",
+    id: "results",
+    label: "Optimized Output",
     type: "output",
     position: { x: 800, y: 150 },
     data: {
-      original: "Email individual PDFs to team members, print copies for filing, manual distribution of physical documents.",
-      steps: ["Step 1: Generate PDF reports", "Step 2: Email distribution", "Step 3: Physical filing"],
-      optimized: "Automated distribution via secure cloud platform with role-based access and version control.",
+      original: "Manual compilation of results with basic formatting. Limited visualization and no automated insights.",
+      steps: ["Step 1: Compile results", "Step 2: Format output", "Step 3: Generate insights"],
+      optimized: "Automated result compilation with intelligent formatting and actionable insights generation.",
       variations: [
-        "Push notification system",
-        "Customizable access levels",
-        "Automated archiving",
-        "API integration options"
+        "Interactive result visualization",
+        "Automated insight extraction",
+        "Custom report generation",
+        "Real-time result updates"
       ],
       metrics: {
         similarity: 82,
@@ -128,6 +129,7 @@ const Index = () => {
   // Fetch data from Python backend
   const { data: workflowData, isLoading: workflowLoading, error: workflowError } = useWorkflowData();
   const { data: analyticsData, isLoading: analyticsLoading } = useAnalyticsSummary();
+  const { data: workflowStatus } = useWorkflowStatus();
 
   // Check backend connection
   useEffect(() => {
@@ -191,7 +193,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">ClimateFlow</h1>
-                <p className="text-sm text-muted-foreground">Optimize workflows for climate impact</p>
+                <p className="text-sm text-muted-foreground">AI-powered professor profile analysis and prompt optimization</p>
               </div>
             </div>
             
@@ -203,6 +205,13 @@ const Index = () => {
                   <div>Climate Impact: {analyticsData.averageClimateImpact}%</div>
                 </div>
               )}
+              
+              {/* Climate Analytics Component */}
+              <ClimateAnalytics 
+                analysisResults={workflowStatus?.data?.analysisResults}
+                workflowResults={workflowStatus?.data?.workflowResults}
+              />
+              
               <div className="text-sm text-muted-foreground">
                 Workflow Analytics
               </div>
@@ -216,8 +225,8 @@ const Index = () => {
         <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'mr-96' : ''}`}>
           <div className="p-6 flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
             <div className="mb-6 text-center">
-              <h2 className="text-xl font-semibold text-foreground mb-2">Workflow Overview</h2>
-              <p className="text-muted-foreground">Click on any node to view optimization details and analytics</p>
+              <h2 className="text-xl font-semibold text-foreground mb-2">Professor Profile Analysis Workflow</h2>
+              <p className="text-muted-foreground">Click on any node to view analysis details and optimization progress</p>
             </div>
             
             <div className="mx-auto" style={{ width: '1050px' }}>
@@ -234,6 +243,8 @@ const Index = () => {
                   nodes={displayData} 
                   onNodeClick={handleNodeClick}
                   selectedNode={selectedNode}
+                  completedSteps={workflowStatus?.data?.completedSteps || []}
+                  currentStep={workflowStatus?.data?.currentStep}
                 />
               )}
             </div>

@@ -18,12 +18,33 @@ This Python backend provides REST API endpoints to serve workflow data to the Re
    pip install -r requirements.txt
    ```
 
-2. **Run the Flask server:**
+2. **Set up API keys:**
+   ```bash
+   # Copy the example environment file
+   cp env_example.txt .env
+   
+   # Edit .env and add your actual API keys:
+   # - novita_api_key: For Llama models (get from https://novita.ai/)
+   # - openai_api_key: For GPT-4 (get from https://platform.openai.com/)
+   # - claude_api_key: For Claude (optional, get from https://console.anthropic.com/)
+   ```
+
+3. **Run the Flask server:**
    ```bash
    python app.py
    ```
 
 The server will start on `http://localhost:5000`
+
+## Required API Keys
+
+The workflow uses real AI models and requires API keys:
+
+- **Novita API**: For Llama 3.3 70B and Llama 3.1 8B models
+- **OpenAI API**: For GPT-4 prompt optimization analysis
+- **Anthropic API**: For Claude (optional, not currently used but available)
+
+Without these keys, the workflow will fail when trying to run the AI analysis steps.
 
 ## API Endpoints
 
