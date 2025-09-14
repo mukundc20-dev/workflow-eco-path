@@ -1,6 +1,8 @@
 # ClimateFlow - Workflow Optimization Platform
 
-A React frontend with Python backend integration for analyzing and optimizing business workflows for climate impact.
+A React frontend with Python backend integration for analyzing and optimizing AI workflows for climate impact.
+
+Takes one step in your workflow and optimizes for lower LLMs by iteratively decreasing model energy use and drastically decreasing overall energy use. 
 
 ## Project info
 
